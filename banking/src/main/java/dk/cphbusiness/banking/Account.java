@@ -4,6 +4,7 @@ public class Account {
   private Bank bank;
   private Customer customer;
   private String number;
+  private long balance = 0;
 
   public Account(Bank bank, Customer customer, String number) {
     this.bank = bank;
@@ -22,9 +23,18 @@ public class Account {
   public String getNumber() {
     return number;
     }
-    
+
   public long getBalance() {
-    return 0;
+    return balance;
     }
 
+  public void transfer(long amount, Account target) {
+    balance -= amount;
+    target.balance += amount;
+    }
+
+  public void transfer(long amount, String targetNumber) {
+    Account target = bank.getAccount(targetNumber);
+    transfer(amount, target);
+    }
   }
