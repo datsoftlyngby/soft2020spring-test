@@ -7,4 +7,8 @@ public class BankDummy implements Bank {
     throw new UnsupportedOperationException();
     }
 
+  @Override
+  public String getName() {
+    throw new UnsupportedOperationException();
+    }
   }

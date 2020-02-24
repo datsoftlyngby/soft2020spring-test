@@ -12,4 +12,8 @@ public class BankStub implements Bank {
     return account;
     }
 
+  @Override
+  public String getName() {
+    throw new UnsupportedOperationException();
+    }
   }
