@@ -7,15 +7,16 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+import static dk.cphbusiness.verifier.utils.Defaults.*;
 
 public class Mocker implements InvocationHandler {
   private Map<String, Object> expectations = new HashMap<>();
   private static Mocker mockerInvoked = null;
   private static Method methodInvoked = null;
 
-  public static Object mock(Class klass) {
+  public static <T> T mock(Class<T> klass) {
     ClassLoader loader = ClassLoader.getSystemClassLoader();
-    return Proxy.newProxyInstance(loader, new Class[] { klass }, new Mocker());
+    return (T)Proxy.newProxyInstance(loader, new Class[] { klass }, new Mocker());
     }
 
   private static String keyOf(Method method) {
@@ -34,7 +35,28 @@ public class Mocker implements InvocationHandler {
     mockerInvoked = null;
     }
 
-    @Override
+  public static Invokation when(Object value) {
+    return new Invokation(mockerInvoked, methodInvoked);
+    }
+
+  public static class Invokation {
+    private final Mocker mocker;
+    private final Method method;
+
+    Invokation(Mocker mocker, Method method) {
+      this.mocker = mocker;
+      this.method = method;
+      }
+    void doReturn(Object result) {
+      String key = keyOf(method);
+      mocker.expectations.put(key, result);
+      }
+    void doThrow(Throwable throwable) {
+
+      }
+    }
+
+  @Override
   public Object invoke(
       Object proxy,
       Method method,
@@ -45,18 +67,20 @@ public class Mocker implements InvocationHandler {
       }
     mockerInvoked = this;
     methodInvoked = method;
-    System.out.println("You called "+method.getName()+" without expectations");
-    return null;
+    return getDefaultValue(method.getReturnType());
     }
 
   public static void main(String[] args) {
-    Bank bank = (Bank)Mocker.mock(Bank.class);
+    Bank bank = Mocker.mock(Bank.class);
     Mocker.when(         // called #3
         bank.getName(),  // called #1
         "KurtsBank"      // called #2
         );
-    Mocker.when(bank.getManager(), "Sonja");
+    Mocker.when(bank.getManager()).doReturn("Sonja");
+    Mocker.when(bank.getBalance()).doReturn(1000l);
 
     System.out.println(bank.getName()+" managed by "+bank.getManager());
+    System.out.println(bank.getBalance());
+    bank.setBalance(30000);
     }
   }
