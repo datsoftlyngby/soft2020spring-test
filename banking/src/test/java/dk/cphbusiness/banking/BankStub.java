@@ -13,6 +13,11 @@ public class BankStub implements Bank {
     }
 
   @Override
+  public Customer getCustomer(String number) {
+    return null;
+    }
+
+  @Override
   public String getName() {
     throw new UnsupportedOperationException();
     }
