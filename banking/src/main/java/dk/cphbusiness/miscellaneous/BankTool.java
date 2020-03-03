@@ -38,7 +38,10 @@ public class BankTool {
         String targetNumber = movementParts[1];
         long amount = Integer.parseInt(movementParts[2]);
         long timestamp = Integer.parseInt(movementParts[3]);
-        Movement movement = new Movement(bank.getAccount(sourceNumber), bank.getAccount(targetNumber), amount, timestamp);
+        Movement movement = new Movement(
+            bank.getAccount(sourceNumber),
+            bank.getAccount(targetNumber),
+            amount, timestamp );
         }
       else throw new RuntimeException();
       }
